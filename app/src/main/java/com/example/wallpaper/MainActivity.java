@@ -7,8 +7,10 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.io.IOException;
+import java.sql.Time;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -35,19 +37,35 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new Timer().schedule(new ChangeWallpaper(), 0, 1000);
+                Timer timer = new Timer();
+                ChangeWallpaper changeWallpaper = new ChangeWallpaper();
+
+                if(!changeWallpaper.hasRunStarted()){
+//                  ------ not required in exam can run this 'timer.sch...' outside 'if' condition ------
+                    timer.schedule(changeWallpaper, 0, 1000);
+                    Toast.makeText(MainActivity.this, "started", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
     }
 
 
     class ChangeWallpaper extends TimerTask{
+
+
+
+//        ----- this function is continuosly called in the schedules time interval -----
         @Override
         public void run() {
+
+            hasStarted = true;
+
             if(i==9){
                 i=0;
             }
             i++;
+
             WallpaperManager  wallpaperManager = WallpaperManager.getInstance(getBaseContext());
             try {
                 wallpaperManager.setBitmap(BitmapFactory.decodeResource(getResources(), images[i]));
@@ -57,5 +75,13 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
+
+//        ------ not required this part in exam ------
+        private boolean hasStarted = false;
+
+        public boolean hasRunStarted(){
+            return hasStarted;
+        }
+
     }
 }
